@@ -348,6 +348,143 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
+    "Method": "CreateJob",
+    "RelativePath": "api/jobs",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.Job.JobCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
+    "Method": "GetAllJobs",
+    "RelativePath": "api/jobs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
+    "Method": "GetJobById",
+    "RelativePath": "api/jobs/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
+    "Method": "UpdateJob",
+    "RelativePath": "api/jobs/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.Job.JobUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
+    "Method": "DeleteJob",
+    "RelativePath": "api/jobs/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
+    "Method": "CloseJob",
+    "RelativePath": "api/jobs/{id}/close",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
+    "Method": "CheckEligibility",
+    "RelativePath": "api/jobs/{id}/eligibility",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
+    "Method": "PublishJob",
+    "RelativePath": "api/jobs/{id}/publish",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
+    "Method": "GetEligibleJobs",
+    "RelativePath": "api/jobs/eligible",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "CampusPlacementManagementAPI.Controllers.PlacementOfficersController",
     "Method": "GetAll",
     "RelativePath": "api/placement-officers",

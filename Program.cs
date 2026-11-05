@@ -1,3 +1,5 @@
+
+using System.Security.Claims;
 using System.Text;
 using CampusPlacementManagementAPI.Data;
 using CampusPlacementManagementAPI.Enums;
@@ -6,35 +8,50 @@ using CampusPlacementManagementAPI.Repositories;
 using CampusPlacementManagementAPI.Repositories.Interfaces;
 using CampusPlacementManagementAPI.Services;
 using CampusPlacementManagementAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database connection
+// --------------------------------------------------
+// DATABASE CONFIGURATION
+// --------------------------------------------------
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Identity configuration
+// --------------------------------------------------
+// IDENTITY CONFIGURATION
+// --------------------------------------------------
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.Password.RequiredLength = 8;
     options.Password.RequireDigit = true;
-    options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
 
     options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// JWT Authentication
-var jwtKey = builder.Configuration["Jwt:Key"]!;
+// --------------------------------------------------
+// JWT AUTHENTICATION
+// --------------------------------------------------
+
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("JWT Key is missing.");
+
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException("JWT Issuer is missing.");
+
+var jwtAudience = builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException("JWT Audience is missing.");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -55,51 +72,88 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
 
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
 
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtKey)),
 
         NameClaimType = ClaimTypes.NameIdentifier,
-        RoleClaimType = ClaimTypes.Role
+        RoleClaimType = ClaimTypes.Role,
+
+        ClockSkew = TimeSpan.Zero
     };
 });
 
-// Authorization
+// --------------------------------------------------
+// AUTHORIZATION
+// --------------------------------------------------
+
 builder.Services.AddAuthorization();
 
-// Repository registrations
+// --------------------------------------------------
+// REPOSITORY REGISTRATIONS
+// --------------------------------------------------
+
 builder.Services.AddScoped<ICollegeRepository, CollegeRepository>();
+
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-builder.Services.AddScoped<IPlacementOfficerRepository, PlacementOfficerRepository>();
+
+builder.Services.AddScoped<IPlacementOfficerRepository,
+    PlacementOfficerRepository>();
+
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+
 builder.Services.AddScoped<ICompanyHRRepository, CompanyHRRepository>();
 
-// Service registrations
-builder.Services.AddScoped<ICollegeService, CollegeService>();
-builder.Services.AddScoped<IStudentService, StudentService>();
-builder.Services.AddScoped<IPlacementOfficerService, PlacementOfficerService>();
-builder.Services.AddScoped<ICompanyService, CompanyService>();
-builder.Services.AddScoped<ICompanyHRService, CompanyHRService>();
+builder.Services.AddScoped<IJobRepository, JobRepository>();
+
+// --------------------------------------------------
+// SERVICE REGISTRATIONS
+// --------------------------------------------------
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Controllers and OpenAPI
+builder.Services.AddScoped<ICollegeService, CollegeService>();
+
+builder.Services.AddScoped<IStudentService, StudentService>();
+
+builder.Services.AddScoped<IPlacementOfficerService,
+    PlacementOfficerService>();
+
+builder.Services.AddScoped<ICompanyService, CompanyService>();
+
+builder.Services.AddScoped<ICompanyHRService, CompanyHRService>();
+
+builder.Services.AddScoped<IJobService, JobService>();
+
+// --------------------------------------------------
+// CONTROLLERS AND SWAGGER
+// --------------------------------------------------
+
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Seed roles and SuperAdmin in Development
+// --------------------------------------------------
+// SEED ROLES AND SUPER ADMIN
+// --------------------------------------------------
+
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
     {
-        var roleManager = scope.ServiceProvider
-            .GetRequiredService<RoleManager<IdentityRole>>();
+        var services = scope.ServiceProvider;
 
-        var userManager = scope.ServiceProvider
-            .GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager =
+            services.GetRequiredService<RoleManager<IdentityRole>>();
+
+        var userManager =
+            services.GetRequiredService<UserManager<ApplicationUser>>();
 
         string[] roles =
         {
@@ -113,57 +167,72 @@ if (app.Environment.IsDevelopment())
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
-                await roleManager.CreateAsync(new IdentityRole(role));
+                await roleManager.CreateAsync(
+                    new IdentityRole(role));
             }
         }
 
-        var adminEmail = builder.Configuration["SeedAdmin:Email"];
-        var adminPassword = builder.Configuration["SeedAdmin:Password"];
-        var adminFullName = builder.Configuration["SeedAdmin:FullName"];
+        var adminEmail =
+            builder.Configuration["SeedAdmin:Email"];
+
+        var adminPassword =
+            builder.Configuration["SeedAdmin:Password"];
+
+        var adminFullName =
+            builder.Configuration["SeedAdmin:FullName"];
 
         if (!string.IsNullOrWhiteSpace(adminEmail) &&
             !string.IsNullOrWhiteSpace(adminPassword))
         {
-            var admin = await userManager.FindByEmailAsync(adminEmail);
+            var adminUser =
+                await userManager.FindByEmailAsync(adminEmail);
 
-            if (admin == null)
+            if (adminUser == null)
             {
-                admin = new ApplicationUser
+                adminUser = new ApplicationUser
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
                     FullName = adminFullName ?? "System Administrator",
                     EmailConfirmed = true,
                     AccountStatus = AccountStatus.Approved,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow
                 };
 
                 var result = await userManager.CreateAsync(
-                    admin, adminPassword);
+                    adminUser, adminPassword);
 
                 if (!result.Succeeded)
                 {
                     var errors = string.Join(
                         ", ",
-                        result.Errors.Select(x => x.Description));
+                        result.Errors.Select(e => e.Description));
 
-                    throw new Exception(
+                    throw new InvalidOperationException(
                         "SuperAdmin creation failed: " + errors);
                 }
             }
 
-            if (!await userManager.IsInRoleAsync(admin, "SuperAdmin"))
+            if (!await userManager.IsInRoleAsync(
+                adminUser, "SuperAdmin"))
             {
-                await userManager.AddToRoleAsync(admin, "SuperAdmin");
+                await userManager.AddToRoleAsync(
+                    adminUser, "SuperAdmin");
             }
         }
     }
-
-    app.MapOpenApi();
 }
 
-// Middleware
+// --------------------------------------------------
+// HTTP PIPELINE
+// --------------------------------------------------
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

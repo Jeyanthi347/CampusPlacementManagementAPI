@@ -1,17 +1,9 @@
 {
-  "openapi": "3.1.1",
+  "openapi": "3.0.4",
   "info": {
-    "title": "CampusPlacementManagementAPI | v1",
-    "version": "1.0.0"
+    "title": "CampusPlacementManagementAPI",
+    "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "https://localhost:7278"
-    },
-    {
-      "url": "http://localhost:5240"
-    }
-  ],
   "paths": {
     "/api/Auth/login": {
       "post": {
@@ -35,8 +27,7 @@
                 "$ref": "#/components/schemas/LoginDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -67,8 +58,7 @@
                 "$ref": "#/components/schemas/ChangePasswordDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -99,8 +89,7 @@
                 "$ref": "#/components/schemas/CollegeCreateDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -132,7 +121,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -154,7 +142,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -177,8 +164,7 @@
                 "$ref": "#/components/schemas/CollegeUpdateDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -198,7 +184,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -222,7 +207,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -246,7 +230,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -281,8 +264,7 @@
                 "$ref": "#/components/schemas/CompanyCreateDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -326,7 +308,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -348,7 +329,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -371,8 +351,7 @@
                 "$ref": "#/components/schemas/CompanyUpdateDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -392,7 +371,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -416,7 +394,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -440,7 +417,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -475,8 +451,7 @@
                 "$ref": "#/components/schemas/CompanyHRRegisterDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -520,7 +495,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -544,7 +518,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -568,7 +541,212 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/jobs": {
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/jobs/{id}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/jobs/{id}/publish": {
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/jobs/{id}/close": {
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/jobs/eligible": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/jobs/{id}/eligibility": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
               "type": "integer",
               "format": "int32"
             }
@@ -603,8 +781,7 @@
                 "$ref": "#/components/schemas/PlacementOfficerRegisterDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -648,7 +825,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -672,7 +848,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -696,7 +871,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -720,7 +894,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -767,8 +940,7 @@
                 "$ref": "#/components/schemas/StudentEnrollDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -836,7 +1008,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -858,7 +1029,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -881,8 +1051,7 @@
                 "$ref": "#/components/schemas/StudentUpdateDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -902,7 +1071,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -926,7 +1094,6 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": "integer",
               "format": "int32"
             }
@@ -944,13 +1111,14 @@
     "schemas": {
       "ChangePasswordDto": {
         "required": [
+          "confirmPassword",
           "currentPassword",
-          "newPassword",
-          "confirmPassword"
+          "newPassword"
         ],
         "type": "object",
         "properties": {
           "currentPassword": {
+            "minLength": 1,
             "type": "string"
           },
           "newPassword": {
@@ -958,15 +1126,17 @@
             "type": "string"
           },
           "confirmPassword": {
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CollegeCreateDto": {
         "required": [
-          "collegeName",
-          "collegeCode",
           "address",
+          "collegeCode",
+          "collegeName",
           "officialEmail",
           "phoneNumber"
         ],
@@ -985,10 +1155,8 @@
           "universityName": {
             "maxLength": 200,
             "minLength": 0,
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "address": {
             "maxLength": 500,
@@ -998,29 +1166,30 @@
           "officialEmail": {
             "maxLength": 255,
             "minLength": 0,
-            "type": "string"
+            "type": "string",
+            "format": "email"
           },
           "phoneNumber": {
             "maxLength": 20,
             "minLength": 0,
-            "type": "string"
+            "type": "string",
+            "format": "tel"
           },
           "website": {
             "maxLength": 255,
             "minLength": 0,
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uri"
+            "type": "string",
+            "format": "uri",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CollegeUpdateDto": {
         "required": [
-          "collegeName",
-          "collegeCode",
           "address",
+          "collegeCode",
+          "collegeName",
           "officialEmail",
           "phoneNumber"
         ],
@@ -1039,10 +1208,8 @@
           "universityName": {
             "maxLength": 200,
             "minLength": 0,
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "address": {
             "maxLength": 500,
@@ -1052,143 +1219,282 @@
           "officialEmail": {
             "maxLength": 255,
             "minLength": 0,
-            "type": "string"
+            "type": "string",
+            "format": "email"
           },
           "phoneNumber": {
             "maxLength": 20,
             "minLength": 0,
-            "type": "string"
+            "type": "string",
+            "format": "tel"
           },
           "website": {
             "maxLength": 255,
             "minLength": 0,
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uri"
+            "type": "string",
+            "format": "uri",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CompanyCreateDto": {
         "required": [
-          "companyName",
+          "address",
           "companyEmail",
-          "industry",
-          "address"
+          "companyName",
+          "industry"
         ],
         "type": "object",
         "properties": {
           "companyName": {
             "maxLength": 200,
+            "minLength": 1,
             "type": "string"
           },
           "companyEmail": {
             "maxLength": 255,
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           },
           "website": {
             "maxLength": 255,
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uri"
+            "type": "string",
+            "format": "uri",
+            "nullable": true
           },
           "industry": {
             "maxLength": 100,
+            "minLength": 1,
             "type": "string"
           },
           "address": {
             "maxLength": 500,
+            "minLength": 1,
             "type": "string"
           },
           "description": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CompanyHRRegisterDto": {
         "required": [
-          "fullName",
+          "companyId",
           "email",
-          "password",
-          "companyId"
+          "fullName",
+          "password"
         ],
         "type": "object",
         "properties": {
           "fullName": {
             "maxLength": 150,
+            "minLength": 1,
             "type": "string"
           },
           "email": {
             "maxLength": 255,
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           },
           "password": {
             "minLength": 8,
             "type": "string"
           },
           "companyId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "designation": {
             "maxLength": 100,
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CompanyUpdateDto": {
         "required": [
-          "companyName",
+          "address",
           "companyEmail",
-          "industry",
-          "address"
+          "companyName",
+          "industry"
         ],
         "type": "object",
         "properties": {
           "companyName": {
             "maxLength": 200,
+            "minLength": 1,
             "type": "string"
           },
           "companyEmail": {
             "maxLength": 255,
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           },
           "website": {
             "maxLength": 255,
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uri"
+            "type": "string",
+            "format": "uri",
+            "nullable": true
           },
           "industry": {
             "maxLength": 100,
+            "minLength": 1,
             "type": "string"
           },
           "address": {
             "maxLength": 500,
+            "minLength": 1,
             "type": "string"
           },
           "description": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "JobCreateDto": {
+        "required": [
+          "applicationDeadline",
+          "jobDescription",
+          "jobTitle",
+          "jobType",
+          "location"
+        ],
+        "type": "object",
+        "properties": {
+          "jobTitle": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "jobDescription": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "jobType": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "location": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "salaryPackage": {
+            "maximum": 999999999999,
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "minimumCGPA": {
+            "maximum": 10,
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "maximumBacklogs": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "applicationDeadline": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isOpenToAllColleges": {
+            "type": "boolean"
+          },
+          "targetCollegeIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "JobUpdateDto": {
+        "required": [
+          "applicationDeadline",
+          "jobDescription",
+          "jobTitle",
+          "jobType",
+          "location"
+        ],
+        "type": "object",
+        "properties": {
+          "jobTitle": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "jobDescription": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "jobType": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "location": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "salaryPackage": {
+            "maximum": 999999999999,
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "minimumCGPA": {
+            "maximum": 10,
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "maximumBacklogs": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "applicationDeadline": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isOpenToAllColleges": {
+            "type": "boolean"
+          },
+          "targetCollegeIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "LoginDto": {
         "required": [
@@ -1198,22 +1504,26 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           },
           "password": {
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "PlacementOfficerRegisterDto": {
         "required": [
-          "fullName",
-          "email",
-          "phoneNumber",
           "collegeId",
+          "confirmPassword",
           "designation",
+          "email",
+          "fullName",
           "password",
-          "confirmPassword"
+          "phoneNumber"
         ],
         "type": "object",
         "properties": {
@@ -1225,21 +1535,19 @@
           "email": {
             "maxLength": 255,
             "minLength": 0,
-            "type": "string"
+            "type": "string",
+            "format": "email"
           },
           "phoneNumber": {
             "maxLength": 20,
             "minLength": 0,
-            "type": "string"
+            "type": "string",
+            "format": "tel"
           },
           "collegeId": {
             "maximum": 2147483647,
             "minimum": 1,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "designation": {
@@ -1253,143 +1561,137 @@
             "type": "string"
           },
           "confirmPassword": {
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "StudentEnrollDto": {
         "required": [
-          "fullName",
+          "degree",
+          "department",
           "email",
+          "fullName",
           "phoneNumber",
           "registerNumber",
-          "department",
-          "degree"
+          "temporaryPassword"
         ],
         "type": "object",
         "properties": {
           "fullName": {
             "maxLength": 150,
+            "minLength": 1,
             "type": "string"
           },
           "email": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           },
           "phoneNumber": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "tel"
           },
           "registerNumber": {
             "maxLength": 50,
+            "minLength": 1,
             "type": "string"
           },
           "department": {
             "maxLength": 100,
+            "minLength": 1,
             "type": "string"
           },
           "degree": {
             "maxLength": 100,
+            "minLength": 1,
             "type": "string"
           },
           "graduationYear": {
             "maximum": 2100,
             "minimum": 2000,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "cgpa": {
             "maximum": 10,
             "minimum": 0,
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "activeBacklogs": {
             "maximum": 2147483647,
             "minimum": 0,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "resumeUrl": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
+          },
+          "temporaryPassword": {
+            "minLength": 8,
+            "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "StudentUpdateDto": {
         "required": [
-          "fullName",
-          "phoneNumber",
+          "degree",
           "department",
-          "degree"
+          "fullName",
+          "phoneNumber"
         ],
         "type": "object",
         "properties": {
           "fullName": {
             "maxLength": 150,
+            "minLength": 1,
             "type": "string"
           },
           "phoneNumber": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "tel"
           },
           "department": {
             "maxLength": 100,
+            "minLength": 1,
             "type": "string"
           },
           "degree": {
             "maxLength": 100,
+            "minLength": 1,
             "type": "string"
           },
           "graduationYear": {
             "maximum": 2100,
             "minimum": 2000,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "cgpa": {
             "maximum": 10,
             "minimum": 0,
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "activeBacklogs": {
             "maximum": 2147483647,
             "minimum": 0,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "resumeUrl": {
             "maxLength": 500,
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       }
     }
   },
@@ -1405,6 +1707,9 @@
     },
     {
       "name": "CompanyHRs"
+    },
+    {
+      "name": "Jobs"
     },
     {
       "name": "PlacementOfficers"

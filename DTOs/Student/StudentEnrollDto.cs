@@ -39,5 +39,9 @@ namespace CampusPlacementManagementAPI.DTOs.Student
         public int ActiveBacklogs { get; set; }
 
         public string? ResumeUrl { get; set; }
+
+        [Required]
+        [MinLength(8)]
+        public string TemporaryPassword { get; set; } = string.Empty;
     }
 }

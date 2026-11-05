@@ -169,3 +169,6 @@ C:\Users\jeyan\source\repos\CampusPlacementManagementAPI\CampusPlacementManageme
 C:\Users\jeyan\source\repos\CampusPlacementManagementAPI\CampusPlacementManagementAPI\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\jeyan\source\repos\CampusPlacementManagementAPI\CampusPlacementManagementAPI\bin\Debug\net10.0\runtimes\win\lib\net9.0\System.Windows.Extensions.dll
 C:\Users\jeyan\source\repos\CampusPlacementManagementAPI\CampusPlacementManagementAPI\obj\Debug\net10.0\CampusPlacementManagementAPI.sourcelink.json
+C:\Users\jeyan\source\repos\CampusPlacementManagementAPI\CampusPlacementManagementAPI\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\jeyan\source\repos\CampusPlacementManagementAPI\CampusPlacementManagementAPI\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\jeyan\source\repos\CampusPlacementManagementAPI\CampusPlacementManagementAPI\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll

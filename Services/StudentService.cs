@@ -6,7 +6,6 @@ using CampusPlacementManagementAPI.Models;
 using CampusPlacementManagementAPI.Repositories.Interfaces;
 using CampusPlacementManagementAPI.Services.Interfaces;
 
-
 namespace CampusPlacementManagementAPI.Services
 {
     public class StudentService : IStudentService
@@ -56,10 +55,10 @@ namespace CampusPlacementManagementAPI.Services
                 UpdatedAt = DateTime.UtcNow
             };
 
-            var temporaryPassword = $"Temp@{Guid.NewGuid():N}1a";
-
+            // Create student account using the temporary password
             var result = await _userManager.CreateAsync(
-                user, temporaryPassword);
+                user,
+                dto.TemporaryPassword);
 
             if (!result.Succeeded)
             {
