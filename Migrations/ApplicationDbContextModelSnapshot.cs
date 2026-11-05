@@ -22,6 +22,43 @@ namespace CampusPlacementManagementAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.ApplicationStatusHistory", b =>
+                {
+                    b.Property<int>("HistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistoryId"));
+
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NewStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PreviousStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("HistoryId");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("UpdatedByUserId");
+
+                    b.ToTable("ApplicationStatusHistories");
+                });
+
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -249,6 +286,43 @@ namespace CampusPlacementManagementAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("CompanyHRs");
+                });
+
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobApplication", b =>
+                {
+                    b.Property<int>("ApplicationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationId"));
+
+                    b.Property<DateTime>("AppliedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResumeUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplicationId");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("StudentId", "JobId")
+                        .IsUnique();
+
+                    b.ToTable("JobApplications");
                 });
 
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobOpening", b =>
@@ -577,6 +651,25 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.ApplicationStatusHistory", b =>
+                {
+                    b.HasOne("CampusPlacementManagementAPI.Models.JobApplication", "Application")
+                        .WithMany("StatusHistory")
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Application");
+
+                    b.Navigation("UpdatedByUser");
+                });
+
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.ApplicationUser", b =>
                 {
                     b.HasOne("CampusPlacementManagementAPI.Models.Student", "Student")
@@ -610,6 +703,25 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobApplication", b =>
+                {
+                    b.HasOne("CampusPlacementManagementAPI.Models.JobOpening", "Job")
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CampusPlacementManagementAPI.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Job");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobOpening", b =>
@@ -753,6 +865,11 @@ namespace CampusPlacementManagementAPI.Migrations
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.ApplicationUser", b =>
                 {
                     b.Navigation("PlacementOfficer");
+                });
+
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobApplication", b =>
+                {
+                    b.Navigation("StatusHistory");
                 });
 
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobOpening", b =>

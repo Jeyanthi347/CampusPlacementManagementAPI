@@ -15,18 +15,12 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --------------------------------------------------
-// DATABASE CONFIGURATION
-// --------------------------------------------------
-
+// DB configuration
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// --------------------------------------------------
-// IDENTITY CONFIGURATION
-// --------------------------------------------------
-
+// Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -34,16 +28,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 8;
-
     options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// --------------------------------------------------
-// JWT AUTHENTICATION
-// --------------------------------------------------
-
+// JWT configuration
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT Key is missing.");
 
@@ -85,64 +75,35 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// --------------------------------------------------
-// AUTHORIZATION
-// --------------------------------------------------
-
 builder.Services.AddAuthorization();
 
-// --------------------------------------------------
-// REPOSITORY REGISTRATIONS
-// --------------------------------------------------
-
+// Repositories
 builder.Services.AddScoped<ICollegeRepository, CollegeRepository>();
-
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-
-builder.Services.AddScoped<IPlacementOfficerRepository,
-    PlacementOfficerRepository>();
-
+builder.Services.AddScoped<IPlacementOfficerRepository, PlacementOfficerRepository>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-
 builder.Services.AddScoped<ICompanyHRRepository, CompanyHRRepository>();
-
 builder.Services.AddScoped<IJobRepository, JobRepository>();
+builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
 
-// --------------------------------------------------
-// SERVICE REGISTRATIONS
-// --------------------------------------------------
-
+// Services
 builder.Services.AddScoped<IAuthService, AuthService>();
-
 builder.Services.AddScoped<ICollegeService, CollegeService>();
-
 builder.Services.AddScoped<IStudentService, StudentService>();
-
-builder.Services.AddScoped<IPlacementOfficerService,
-    PlacementOfficerService>();
-
+builder.Services.AddScoped<IPlacementOfficerService, PlacementOfficerService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
-
 builder.Services.AddScoped<ICompanyHRService, CompanyHRService>();
-
 builder.Services.AddScoped<IJobService, JobService>();
+builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 
-// --------------------------------------------------
-// CONTROLLERS AND SWAGGER
-// --------------------------------------------------
-
+// Controllers and Swagger
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// --------------------------------------------------
-// SEED ROLES AND SUPER ADMIN
-// --------------------------------------------------
-
+// Seed roles and SuperAdmin in Development
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
@@ -167,19 +128,13 @@ if (app.Environment.IsDevelopment())
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
-                await roleManager.CreateAsync(
-                    new IdentityRole(role));
+                await roleManager.CreateAsync(new IdentityRole(role));
             }
         }
 
-        var adminEmail =
-            builder.Configuration["SeedAdmin:Email"];
-
-        var adminPassword =
-            builder.Configuration["SeedAdmin:Password"];
-
-        var adminFullName =
-            builder.Configuration["SeedAdmin:FullName"];
+        var adminEmail = builder.Configuration["SeedAdmin:Email"];
+        var adminPassword = builder.Configuration["SeedAdmin:Password"];
+        var adminFullName = builder.Configuration["SeedAdmin:FullName"];
 
         if (!string.IsNullOrWhiteSpace(adminEmail) &&
             !string.IsNullOrWhiteSpace(adminPassword))
@@ -200,7 +155,8 @@ if (app.Environment.IsDevelopment())
                 };
 
                 var result = await userManager.CreateAsync(
-                    adminUser, adminPassword);
+                    adminUser,
+                    adminPassword);
 
                 if (!result.Succeeded)
                 {
@@ -223,10 +179,7 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-// --------------------------------------------------
-// HTTP PIPELINE
-// --------------------------------------------------
-
+// Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -236,7 +189,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

@@ -13,7 +13,9 @@ namespace CampusPlacementManagementAPI.Data
         {
         }
 
-        // DbSets
+        // ==========================================
+        // DBSETS
+        // ==========================================
 
         public DbSet<College> Colleges { get; set; }
 
@@ -28,6 +30,10 @@ namespace CampusPlacementManagementAPI.Data
         public DbSet<JobOpening> JobOpenings { get; set; }
 
         public DbSet<JobTargetCollege> JobTargetColleges { get; set; }
+
+        public DbSet<JobApplication> JobApplications { get; set; }
+
+        public DbSet<ApplicationStatusHistory> ApplicationStatusHistories { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -135,15 +141,11 @@ namespace CampusPlacementManagementAPI.Data
                     .HasForeignKey<Student>(x => x.UserId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // Student to College relationship
-                // No navigation property required in Student model
                 entity.HasOne<College>()
                     .WithMany()
                     .HasForeignKey(x => x.CollegeId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // Student to PlacementOfficer relationship
-                // No navigation property required in Student model
                 entity.HasOne<PlacementOfficer>()
                     .WithMany()
                     .HasForeignKey(x => x.PlacementOfficerId)
@@ -302,6 +304,81 @@ namespace CampusPlacementManagementAPI.Data
                     x.JobId,
                     x.CollegeId
                 }).IsUnique();
+            });
+
+
+            // ==========================================
+            // JOB APPLICATION CONFIGURATION
+            // ==========================================
+
+            builder.Entity<JobApplication>(entity =>
+            {
+                entity.HasKey(x => x.ApplicationId);
+
+                entity.Property(x => x.Status)
+                    .IsRequired();
+
+                entity.Property(x => x.AppliedAt)
+                    .IsRequired();
+
+                entity.Property(x => x.LastUpdatedAt)
+                    .IsRequired();
+
+                entity.Property(x => x.ResumeUrl)
+                    .HasMaxLength(500);
+
+                // One student cannot apply twice for the same job.
+                entity.HasIndex(x => new
+                {
+                    x.StudentId,
+                    x.JobId
+                }).IsUnique();
+
+                // Job relationship
+                entity.HasOne(x => x.Job)
+                    .WithMany()
+                    .HasForeignKey(x => x.JobId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Student relationship
+                entity.HasOne(x => x.Student)
+                    .WithMany()
+                    .HasForeignKey(x => x.StudentId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+
+            // ==========================================
+            // APPLICATION STATUS HISTORY CONFIGURATION
+            // ==========================================
+
+            builder.Entity<ApplicationStatusHistory>(entity =>
+            {
+                entity.HasKey(x => x.HistoryId);
+
+                entity.Property(x => x.NewStatus)
+                    .IsRequired();
+
+                entity.Property(x => x.Remarks)
+                    .HasMaxLength(500);
+
+                entity.Property(x => x.UpdatedByUserId)
+                    .IsRequired();
+
+                entity.Property(x => x.UpdatedAt)
+                    .IsRequired();
+
+                // Application relationship
+                entity.HasOne(x => x.Application)
+                    .WithMany(x => x.StatusHistory)
+                    .HasForeignKey(x => x.ApplicationId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // User who changed the application status
+                entity.HasOne(x => x.UpdatedByUser)
+                    .WithMany()
+                    .HasForeignKey(x => x.UpdatedByUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
