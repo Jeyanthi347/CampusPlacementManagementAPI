@@ -11,7 +11,7 @@ namespace CampusPlacementManagementAPI.Repositories.Interfaces
 
         Task<bool> ExistsByCodeAsync(string collegeCode);
 
-        Task<bool> ExistsByEmailAsync(string email);
+        Task<bool> ExistsByEmailAsync(string officialEmail);
 
         Task AddAsync(College college);
 

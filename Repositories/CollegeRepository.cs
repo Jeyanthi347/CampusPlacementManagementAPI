@@ -18,7 +18,7 @@ namespace CampusPlacementManagementAPI.Repositories
         public async Task<List<College>> GetAllAsync()
         {
             return await _context.Colleges
-                .AsNoTracking()
+                .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
         }
 
@@ -34,10 +34,10 @@ namespace CampusPlacementManagementAPI.Repositories
                 .AnyAsync(c => c.CollegeCode == collegeCode);
         }
 
-        public async Task<bool> ExistsByEmailAsync(string email)
+        public async Task<bool> ExistsByEmailAsync(string officialEmail)
         {
             return await _context.Colleges
-                .AnyAsync(c => c.Email == email);
+                .AnyAsync(c => c.OfficialEmail == officialEmail);
         }
 
         public async Task AddAsync(College college)

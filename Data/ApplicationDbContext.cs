@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using CampusPlacementManagementAPI.Models;
+using CampusPlacementManagementAPI.Enums;
 
 namespace CampusPlacementManagementAPI.Data
 {
@@ -28,36 +29,42 @@ namespace CampusPlacementManagementAPI.Data
 
                 entity.Property(c => c.CollegeName)
                     .IsRequired()
-                    .HasMaxLength(150);
+                    .HasMaxLength(200);
 
                 entity.Property(c => c.CollegeCode)
                     .IsRequired()
-                    .HasMaxLength(30);
+                    .HasMaxLength(50);
+
+                entity.Property(c => c.UniversityName)
+                    .HasMaxLength(200);
 
                 entity.Property(c => c.Address)
                     .IsRequired()
-                    .HasMaxLength(250);
+                    .HasMaxLength(500);
 
-                entity.Property(c => c.City)
+                entity.Property(c => c.OfficialEmail)
+                    .HasColumnName("Email")
                     .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(c => c.State)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(c => c.Email)
-                    .IsRequired()
-                    .HasMaxLength(150);
+                    .HasMaxLength(255);
 
                 entity.Property(c => c.PhoneNumber)
                     .IsRequired()
                     .HasMaxLength(20);
 
+                entity.Property(c => c.Website)
+                    .HasMaxLength(255);
+
+                entity.Property(c => c.Status)
+                    .HasConversion<int>()
+                    .HasDefaultValue(CollegeStatus.Pending);
+
+                entity.Property(c => c.CreatedAt)
+                    .IsRequired();
+
                 entity.HasIndex(c => c.CollegeCode)
                     .IsUnique();
 
-                entity.HasIndex(c => c.Email)
+                entity.HasIndex(c => c.OfficialEmail)
                     .IsUnique();
             });
 

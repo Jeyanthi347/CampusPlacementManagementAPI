@@ -1,5 +1,6 @@
 
 using CampusPlacementManagementAPI.DTOs.College;
+using CampusPlacementManagementAPI.Enums;
 
 namespace CampusPlacementManagementAPI.Services.Interfaces
 {
@@ -15,6 +16,8 @@ namespace CampusPlacementManagementAPI.Services.Interfaces
             int collegeId,
             CollegeUpdateDto dto);
 
-        Task<bool> DeleteCollegeAsync(int collegeId);
+        Task<bool> UpdateCollegeStatusAsync(
+            int collegeId,
+            CollegeStatus status);
     }
 }

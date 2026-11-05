@@ -77,6 +77,188 @@
         }
       }
     },
+    "/api/Colleges/register": {
+      "post": {
+        "tags": [
+          "Colleges"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollegeCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollegeCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollegeCreateDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Colleges": {
+      "get": {
+        "tags": [
+          "Colleges"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Colleges/{id}": {
+      "get": {
+        "tags": [
+          "Colleges"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Colleges"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollegeUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollegeUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollegeUpdateDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Colleges/{id}/approve": {
+      "put": {
+        "tags": [
+          "Colleges"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Colleges/{id}/reject": {
+      "put": {
+        "tags": [
+          "Colleges"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Colleges/{id}/suspend": {
+      "put": {
+        "tags": [
+          "Colleges"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Students/enroll": {
       "post": {
         "tags": [
@@ -294,6 +476,114 @@
           }
         }
       },
+      "CollegeCreateDto": {
+        "required": [
+          "collegeName",
+          "collegeCode",
+          "address",
+          "officialEmail",
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "collegeName": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "collegeCode": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string"
+          },
+          "universityName": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "address": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string"
+          },
+          "officialEmail": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string"
+          },
+          "phoneNumber": {
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string"
+          },
+          "website": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uri"
+          }
+        }
+      },
+      "CollegeUpdateDto": {
+        "required": [
+          "collegeName",
+          "collegeCode",
+          "address",
+          "officialEmail",
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "collegeName": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "collegeCode": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string"
+          },
+          "universityName": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "address": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string"
+          },
+          "officialEmail": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string"
+          },
+          "phoneNumber": {
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string"
+          },
+          "website": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uri"
+          }
+        }
+      },
       "LoginDto": {
         "required": [
           "email",
@@ -448,6 +738,9 @@
   "tags": [
     {
       "name": "Auth"
+    },
+    {
+      "name": "Colleges"
     },
     {
       "name": "Students"

@@ -32,6 +32,117 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.CollegesController",
+    "Method": "GetAllColleges",
+    "RelativePath": "api/Colleges",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.CollegesController",
+    "Method": "GetCollegeById",
+    "RelativePath": "api/Colleges/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.CollegesController",
+    "Method": "UpdateCollege",
+    "RelativePath": "api/Colleges/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.College.CollegeUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.CollegesController",
+    "Method": "ApproveCollege",
+    "RelativePath": "api/Colleges/{id}/approve",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.CollegesController",
+    "Method": "RejectCollege",
+    "RelativePath": "api/Colleges/{id}/reject",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.CollegesController",
+    "Method": "SuspendCollege",
+    "RelativePath": "api/Colleges/{id}/suspend",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.CollegesController",
+    "Method": "RegisterCollege",
+    "RelativePath": "api/Colleges/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.College.CollegeCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "CampusPlacementManagementAPI.Controllers.StudentsController",
     "Method": "GetAllStudents",
     "RelativePath": "api/Students",
