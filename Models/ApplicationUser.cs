@@ -14,13 +14,12 @@ namespace CampusPlacementManagementAPI.Models
         public AccountStatus AccountStatus { get; set; }
             = AccountStatus.Pending;
 
-        public DateTime CreatedAt { get; set; }
-            = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public DateTime UpdatedAt { get; set; }
-            = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation property
         public Student? Student { get; set; }
+
+        public PlacementOfficer? PlacementOfficer { get; set; }
     }
 }

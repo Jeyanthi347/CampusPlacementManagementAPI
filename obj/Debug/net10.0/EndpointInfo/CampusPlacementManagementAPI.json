@@ -259,6 +259,170 @@
         }
       }
     },
+    "/api/placement-officers/register": {
+      "post": {
+        "tags": [
+          "PlacementOfficers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlacementOfficerRegisterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlacementOfficerRegisterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlacementOfficerRegisterDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/placement-officers": {
+      "get": {
+        "tags": [
+          "PlacementOfficers"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/placement-officers/pending": {
+      "get": {
+        "tags": [
+          "PlacementOfficers"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/placement-officers/{id}": {
+      "get": {
+        "tags": [
+          "PlacementOfficers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/placement-officers/{id}/approve": {
+      "put": {
+        "tags": [
+          "PlacementOfficers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/placement-officers/{id}/reject": {
+      "put": {
+        "tags": [
+          "PlacementOfficers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/placement-officers/{id}/suspend": {
+      "put": {
+        "tags": [
+          "PlacementOfficers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/placement-officers/me": {
+      "get": {
+        "tags": [
+          "PlacementOfficers"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Students/enroll": {
       "post": {
         "tags": [
@@ -599,6 +763,58 @@
           }
         }
       },
+      "PlacementOfficerRegisterDto": {
+        "required": [
+          "fullName",
+          "email",
+          "phoneNumber",
+          "collegeId",
+          "designation",
+          "password",
+          "confirmPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "maxLength": 150,
+            "minLength": 0,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string"
+          },
+          "phoneNumber": {
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string"
+          },
+          "collegeId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "designation": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 100,
+            "minLength": 8,
+            "type": "string"
+          },
+          "confirmPassword": {
+            "type": "string"
+          }
+        }
+      },
       "StudentEnrollDto": {
         "required": [
           "fullName",
@@ -741,6 +957,9 @@
     },
     {
       "name": "Colleges"
+    },
+    {
+      "name": "PlacementOfficers"
     },
     {
       "name": "Students"

@@ -78,9 +78,6 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("StudentId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -100,8 +97,6 @@ namespace CampusPlacementManagementAPI.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("StudentId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -167,6 +162,49 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.ToTable("Colleges");
                 });
 
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.PlacementOfficer", b =>
+                {
+                    b.Property<int>("PlacementOfficerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlacementOfficerId"));
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CollegeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Designation")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PlacementOfficerId");
+
+                    b.HasIndex("ApprovedBy");
+
+                    b.HasIndex("CollegeId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("PlacementOfficers");
+                });
+
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.Student", b =>
                 {
                     b.Property<int>("StudentId")
@@ -182,6 +220,7 @@ namespace CampusPlacementManagementAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("CGPA")
+                        .HasPrecision(4, 2)
                         .HasColumnType("decimal(4,2)");
 
                     b.Property<int>("CollegeId")
@@ -213,7 +252,9 @@ namespace CampusPlacementManagementAPI.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -363,13 +404,30 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CampusPlacementManagementAPI.Models.ApplicationUser", b =>
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.PlacementOfficer", b =>
                 {
-                    b.HasOne("CampusPlacementManagementAPI.Models.Student", "Student")
+                    b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", "Approver")
                         .WithMany()
-                        .HasForeignKey("StudentId");
+                        .HasForeignKey("ApprovedBy")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Student");
+                    b.HasOne("CampusPlacementManagementAPI.Models.College", "College")
+                        .WithMany()
+                        .HasForeignKey("CollegeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", "User")
+                        .WithOne("PlacementOfficer")
+                        .HasForeignKey("CampusPlacementManagementAPI.Models.PlacementOfficer", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Approver");
+
+                    b.Navigation("College");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.Student", b =>
@@ -381,7 +439,7 @@ namespace CampusPlacementManagementAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", "User")
-                        .WithOne()
+                        .WithOne("Student")
                         .HasForeignKey("CampusPlacementManagementAPI.Models.Student", "UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -438,6 +496,13 @@ namespace CampusPlacementManagementAPI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("PlacementOfficer");
+
+                    b.Navigation("Student");
                 });
 #pragma warning restore 612, 618
         }

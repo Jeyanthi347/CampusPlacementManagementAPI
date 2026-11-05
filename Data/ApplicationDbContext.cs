@@ -1,12 +1,13 @@
 
+using CampusPlacementManagementAPI.Enums;
+using CampusPlacementManagementAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using CampusPlacementManagementAPI.Models;
-using CampusPlacementManagementAPI.Enums;
 
 namespace CampusPlacementManagementAPI.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext
+        : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options)
@@ -14,9 +15,11 @@ namespace CampusPlacementManagementAPI.Data
         {
         }
 
-        public DbSet<Student> Students { get; set; }
+        public DbSet<Student> Students { get; set; } = null!;
 
-        public DbSet<College> Colleges { get; set; }
+        public DbSet<College> Colleges { get; set; } = null!;
+
+        public DbSet<PlacementOfficer> PlacementOfficers { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -28,35 +31,37 @@ namespace CampusPlacementManagementAPI.Data
                 entity.HasKey(c => c.CollegeId);
 
                 entity.Property(c => c.CollegeName)
-                    .IsRequired()
-                    .HasMaxLength(200);
+                    .HasMaxLength(200)
+                    .IsRequired();
 
                 entity.Property(c => c.CollegeCode)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .IsRequired();
 
                 entity.Property(c => c.UniversityName)
-                    .HasMaxLength(200);
+                    .HasMaxLength(200)
+                    .IsRequired(false);
 
                 entity.Property(c => c.Address)
-                    .IsRequired()
-                    .HasMaxLength(500);
+                    .HasMaxLength(500)
+                    .IsRequired();
 
                 entity.Property(c => c.OfficialEmail)
                     .HasColumnName("Email")
-                    .IsRequired()
-                    .HasMaxLength(255);
+                    .HasMaxLength(255)
+                    .IsRequired();
 
                 entity.Property(c => c.PhoneNumber)
-                    .IsRequired()
-                    .HasMaxLength(20);
+                    .HasMaxLength(20)
+                    .IsRequired();
 
                 entity.Property(c => c.Website)
-                    .HasMaxLength(255);
+                    .HasMaxLength(255)
+                    .IsRequired(false);
 
                 entity.Property(c => c.Status)
-                    .HasConversion<int>()
-                    .HasDefaultValue(CollegeStatus.Pending);
+                    .HasDefaultValue(CollegeStatus.Pending)
+                    .IsRequired();
 
                 entity.Property(c => c.CreatedAt)
                     .IsRequired();
@@ -77,34 +82,40 @@ namespace CampusPlacementManagementAPI.Data
                     .IsRequired();
 
                 entity.Property(s => s.RegisterNumber)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .IsRequired();
 
                 entity.Property(s => s.Department)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .IsRequired();
 
                 entity.Property(s => s.Degree)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .IsRequired();
 
                 entity.Property(s => s.CGPA)
-                    .HasColumnType("decimal(4,2)");
+                    .HasPrecision(4, 2);
 
                 entity.Property(s => s.ResumeUrl)
-                    .HasMaxLength(500);
+                    .HasMaxLength(500)
+                    .IsRequired(false);
+
+                entity.Property(s => s.Status)
+                    .HasDefaultValue(StudentStatus.Pending)
+                    .IsRequired();
+
+                entity.HasIndex(s => s.UserId)
+                    .IsUnique();
 
                 entity.HasIndex(s => new
                 {
                     s.CollegeId,
                     s.RegisterNumber
-                }).IsUnique();
-
-                entity.HasIndex(s => s.UserId)
-                    .IsUnique();
+                })
+                .IsUnique();
 
                 entity.HasOne(s => s.User)
-                    .WithOne()
+                    .WithOne(u => u.Student)
                     .HasForeignKey<Student>(s => s.UserId)
                     .OnDelete(DeleteBehavior.Restrict);
 
@@ -112,6 +123,49 @@ namespace CampusPlacementManagementAPI.Data
                     .WithMany()
                     .HasForeignKey(s => s.CollegeId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Placement Officer Configuration
+            builder.Entity<PlacementOfficer>(entity =>
+            {
+                entity.HasKey(p => p.PlacementOfficerId);
+
+                entity.Property(p => p.UserId)
+                    .IsRequired();
+
+                entity.Property(p => p.Designation)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(p => p.Status)
+                    .HasDefaultValue(PlacementOfficerStatus.Pending)
+                    .IsRequired();
+
+                entity.Property(p => p.ApprovedBy)
+                    .IsRequired(false);
+
+                // One ApplicationUser can have one PlacementOfficer profile
+                entity.HasOne(p => p.User)
+                    .WithOne(u => u.PlacementOfficer)
+                    .HasForeignKey<PlacementOfficer>(p => p.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // One College can have multiple Placement Officers
+                entity.HasOne(p => p.College)
+                    .WithMany()
+                    .HasForeignKey(p => p.CollegeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // SuperAdmin who approved the Placement Officer
+                entity.HasOne(p => p.Approver)
+                    .WithMany()
+                    .HasForeignKey(p => p.ApprovedBy)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(p => p.UserId)
+                    .IsUnique();
+
+                entity.HasIndex(p => p.CollegeId);
             });
         }
     }
