@@ -1,4 +1,3 @@
-
 using CampusPlacementManagementAPI.Enums;
 using CampusPlacementManagementAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -6,8 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CampusPlacementManagementAPI.Data
 {
-    public class ApplicationDbContext
-        : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options)
@@ -15,182 +13,176 @@ namespace CampusPlacementManagementAPI.Data
         {
         }
 
-        public DbSet<Student> Students { get; set; } = null!;
-
-        public DbSet<College> Colleges { get; set; } = null!;
-
-        public DbSet<PlacementOfficer> PlacementOfficers { get; set; } = null!;
-
-        public DbSet<Company> Companies { get; set; } = null!;
+        public DbSet<College> Colleges { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<PlacementOfficer> PlacementOfficers { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<CompanyHR> CompanyHRs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // College Configuration
+            // College configuration
             builder.Entity<College>(entity =>
             {
-                entity.HasKey(c => c.CollegeId);
+                entity.HasKey(x => x.CollegeId);
 
-                entity.Property(c => c.CollegeName)
+                entity.Property(x => x.CollegeName)
                     .IsRequired()
                     .HasMaxLength(200);
 
-                entity.Property(c => c.CollegeCode)
+                entity.Property(x => x.CollegeCode)
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(c => c.UniversityName)
+                entity.Property(x => x.UniversityName)
                     .HasMaxLength(200);
 
-                entity.Property(c => c.Address)
+                entity.Property(x => x.Address)
                     .IsRequired()
                     .HasMaxLength(500);
 
-                entity.Property(c => c.OfficialEmail)
+                entity.Property(x => x.OfficialEmail)
                     .HasColumnName("Email")
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(c => c.PhoneNumber)
+                entity.Property(x => x.PhoneNumber)
                     .IsRequired()
                     .HasMaxLength(20);
 
-                entity.Property(c => c.Website)
+                entity.Property(x => x.Website)
                     .HasMaxLength(255);
 
-                entity.Property(c => c.Status)
+                entity.Property(x => x.Status)
                     .HasDefaultValue(CollegeStatus.Pending);
 
-                entity.HasIndex(c => c.CollegeCode)
+                entity.Property(x => x.CreatedAt)
+                    .IsRequired();
+
+                entity.HasIndex(x => x.CollegeCode)
                     .IsUnique();
 
-                entity.HasIndex(c => c.OfficialEmail)
+                entity.HasIndex(x => x.OfficialEmail)
                     .IsUnique();
             });
 
-            // Student Configuration
+            // Student configuration
             builder.Entity<Student>(entity =>
             {
-                entity.HasKey(s => s.StudentId);
+                entity.HasKey(x => x.StudentId);
 
-                entity.Property(s => s.UserId)
-                    .IsRequired();
-
-                entity.Property(s => s.RegisterNumber)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(s => s.Department)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(s => s.Degree)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(s => s.CGPA)
-                    .HasPrecision(4, 2);
-
-                entity.Property(s => s.ResumeUrl)
-                    .HasMaxLength(500);
-
-                entity.Property(s => s.Status)
-                    .HasDefaultValue(StudentStatus.Pending);
-
-                entity.HasIndex(s => s.UserId)
-                    .IsUnique();
-
-                entity.HasIndex(s => new
-                {
-                    s.CollegeId,
-                    s.RegisterNumber
-                }).IsUnique();
-
-                entity.HasOne(s => s.User)
-                    .WithOne(u => u.Student)
-                    .HasForeignKey<Student>(s => s.UserId)
+                entity.HasOne<ApplicationUser>()
+                    .WithOne(x => x.Student)
+                    .HasForeignKey<Student>(x => x.UserId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne<College>()
                     .WithMany()
-                    .HasForeignKey(s => s.CollegeId)
+                    .HasForeignKey(x => x.CollegeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<PlacementOfficer>()
+                    .WithMany()
+                    .HasForeignKey(x => x.PlacementOfficerId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Placement Officer Configuration
+            // Placement Officer configuration
             builder.Entity<PlacementOfficer>(entity =>
             {
-                entity.HasKey(p => p.PlacementOfficerId);
+                entity.HasKey(x => x.PlacementOfficerId);
 
-                entity.Property(p => p.UserId)
-                    .IsRequired();
-
-                entity.Property(p => p.Designation)
+                entity.Property(x => x.Designation)
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(p => p.Status)
+                entity.Property(x => x.Status)
                     .HasDefaultValue(PlacementOfficerStatus.Pending);
 
-                entity.Property(p => p.ApprovedBy)
-                    .IsRequired(false);
-
-                entity.HasOne(p => p.User)
-                    .WithOne(u => u.PlacementOfficer)
-                    .HasForeignKey<PlacementOfficer>(p => p.UserId)
+                entity.HasOne(x => x.User)
+                    .WithOne(x => x.PlacementOfficer)
+                    .HasForeignKey<PlacementOfficer>(x => x.UserId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne(p => p.College)
+                entity.HasOne(x => x.College)
                     .WithMany()
-                    .HasForeignKey(p => p.CollegeId)
+                    .HasForeignKey(x => x.CollegeId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne(p => p.Approver)
+                entity.HasOne(x => x.Approver)
                     .WithMany()
-                    .HasForeignKey(p => p.ApprovedBy)
+                    .HasForeignKey(x => x.ApprovedBy)
                     .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasIndex(p => p.UserId)
-                    .IsUnique();
-
-                entity.HasIndex(p => p.CollegeId);
             });
 
-            // Company Configuration
+            // Company configuration
             builder.Entity<Company>(entity =>
             {
-                entity.HasKey(c => c.CompanyId);
+                entity.HasKey(x => x.CompanyId);
 
-                entity.Property(c => c.CompanyName)
+                entity.Property(x => x.CompanyName)
                     .IsRequired()
                     .HasMaxLength(200);
 
-                entity.Property(c => c.CompanyEmail)
+                entity.Property(x => x.CompanyEmail)
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(c => c.Website)
+                entity.Property(x => x.Website)
                     .HasMaxLength(255);
 
-                entity.Property(c => c.Industry)
+                entity.Property(x => x.Industry)
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(c => c.Address)
+                entity.Property(x => x.Address)
                     .IsRequired()
                     .HasMaxLength(500);
 
-                entity.Property(c => c.Description)
-                    .IsRequired(false);
+                entity.Property(x => x.Description);
 
-                entity.Property(c => c.Status)
+                entity.Property(x => x.Status)
                     .HasDefaultValue(CompanyStatus.Pending);
 
-                entity.Property(c => c.CreatedAt)
+                entity.Property(x => x.CreatedAt)
                     .IsRequired();
 
-                entity.HasIndex(c => c.CompanyEmail)
+                entity.HasIndex(x => x.CompanyEmail)
+                    .IsUnique();
+            });
+
+            // Company HR configuration
+            builder.Entity<CompanyHR>(entity =>
+            {
+                entity.HasKey(x => x.CompanyHRId);
+
+                entity.Property(x => x.UserId)
+                    .IsRequired();
+
+                entity.Property(x => x.Designation)
+                    .HasMaxLength(100);
+
+                // One ApplicationUser belongs to one CompanyHR profile
+                entity.HasOne(x => x.User)
+                    .WithOne()
+                    .HasForeignKey<CompanyHR>(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // One company can have multiple HR users
+                entity.HasOne(x => x.Company)
+                    .WithMany()
+                    .HasForeignKey(x => x.CompanyId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // SuperAdmin who approved the HR registration
+                entity.HasOne(x => x.Approver)
+                    .WithMany()
+                    .HasForeignKey(x => x.ApprovedBy)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => x.UserId)
                     .IsUnique();
             });
         }

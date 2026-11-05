@@ -213,6 +213,43 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.CompanyHR", b =>
+                {
+                    b.Property<int>("CompanyHRId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompanyHRId"));
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Designation")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CompanyHRId");
+
+                    b.HasIndex("ApprovedBy");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("CompanyHRs");
+                });
+
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.PlacementOfficer", b =>
                 {
                     b.Property<int>("PlacementOfficerId")
@@ -271,21 +308,18 @@ namespace CampusPlacementManagementAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("CGPA")
-                        .HasPrecision(4, 2)
-                        .HasColumnType("decimal(4,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CollegeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Degree")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Department")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("GraduationYear")
                         .HasColumnType("int");
@@ -295,29 +329,31 @@ namespace CampusPlacementManagementAPI.Migrations
 
                     b.Property<string>("RegisterNumber")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResumeUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("StudentId");
+
+                    b.HasIndex("CollegeId");
+
+                    b.HasIndex("PlacementOfficerId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.HasIndex("CollegeId", "RegisterNumber")
-                        .IsUnique();
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Students");
                 });
@@ -455,6 +491,32 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.CompanyHR", b =>
+                {
+                    b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", "Approver")
+                        .WithMany()
+                        .HasForeignKey("ApprovedBy")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CampusPlacementManagementAPI.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", "User")
+                        .WithOne()
+                        .HasForeignKey("CampusPlacementManagementAPI.Models.CompanyHR", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Approver");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.PlacementOfficer", b =>
                 {
                     b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", "Approver")
@@ -489,11 +551,21 @@ namespace CampusPlacementManagementAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", "User")
+                    b.HasOne("CampusPlacementManagementAPI.Models.PlacementOfficer", null)
+                        .WithMany()
+                        .HasForeignKey("PlacementOfficerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", null)
                         .WithOne("Student")
                         .HasForeignKey("CampusPlacementManagementAPI.Models.Student", "UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("CampusPlacementManagementAPI.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });

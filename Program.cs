@@ -1,27 +1,25 @@
-
+using System.Text;
 using CampusPlacementManagementAPI.Data;
+using CampusPlacementManagementAPI.Enums;
 using CampusPlacementManagementAPI.Models;
 using CampusPlacementManagementAPI.Repositories;
 using CampusPlacementManagementAPI.Repositories.Interfaces;
 using CampusPlacementManagementAPI.Services;
 using CampusPlacementManagementAPI.Services.Interfaces;
-
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
 using System.Security.Claims;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database Configuration
+// Database connection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Identity Configuration
+// Identity configuration
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 8;
@@ -35,11 +33,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// JWT Authentication Configuration
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-
-var key = Encoding.UTF8.GetBytes(
-    jwtSettings["Key"]!);
+// JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"]!;
 
 builder.Services.AddAuthentication(options =>
 {
@@ -47,9 +42,6 @@ builder.Services.AddAuthentication(options =>
         JwtBearerDefaults.AuthenticationScheme;
 
     options.DefaultChallengeScheme =
-        JwtBearerDefaults.AuthenticationScheme;
-
-    options.DefaultScheme =
         JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
@@ -63,51 +55,33 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
 
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
 
-        IssuerSigningKey = new SymmetricSecurityKey(key),
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(jwtKey)),
 
         NameClaimType = ClaimTypes.NameIdentifier,
-        RoleClaimType = ClaimTypes.Role,
-
-        ClockSkew = TimeSpan.Zero
+        RoleClaimType = ClaimTypes.Role
     };
 });
 
-// Authorization Configuration
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("SuperAdminOnly", policy =>
-        policy.RequireRole("SuperAdmin"));
+// Authorization
+builder.Services.AddAuthorization();
 
-    options.AddPolicy("PlacementOfficerOnly", policy =>
-        policy.RequireRole("PlacementOfficer"));
-
-    options.AddPolicy("CompanyHROnly", policy =>
-        policy.RequireRole("CompanyHR"));
-
-    options.AddPolicy("StudentOnly", policy =>
-        policy.RequireRole("Student"));
-});
-
-// College Repository and Service
+// Repository registrations
 builder.Services.AddScoped<ICollegeRepository, CollegeRepository>();
-builder.Services.AddScoped<ICollegeService, CollegeService>();
-
-// Student Repository and Service
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-builder.Services.AddScoped<IStudentService, StudentService>();
-
-// Placement Officer Repository and Service
 builder.Services.AddScoped<IPlacementOfficerRepository, PlacementOfficerRepository>();
-builder.Services.AddScoped<IPlacementOfficerService, PlacementOfficerService>();
-
-// Company Repository and Service
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<ICompanyHRRepository, CompanyHRRepository>();
 
-// Authentication Service
+// Service registrations
+builder.Services.AddScoped<ICollegeService, CollegeService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IPlacementOfficerService, PlacementOfficerService>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<ICompanyHRService, CompanyHRService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Controllers and OpenAPI
@@ -116,7 +90,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// SuperAdmin and Role Seeding
+// Seed roles and SuperAdmin in Development
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
@@ -139,19 +113,13 @@ if (app.Environment.IsDevelopment())
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
-                await roleManager.CreateAsync(
-                    new IdentityRole(role));
+                await roleManager.CreateAsync(new IdentityRole(role));
             }
         }
 
-        var adminEmail =
-            builder.Configuration["SeedAdmin:Email"];
-
-        var adminPassword =
-            builder.Configuration["SeedAdmin:Password"];
-
-        var adminName =
-            builder.Configuration["SeedAdmin:FullName"];
+        var adminEmail = builder.Configuration["SeedAdmin:Email"];
+        var adminPassword = builder.Configuration["SeedAdmin:Password"];
+        var adminFullName = builder.Configuration["SeedAdmin:FullName"];
 
         if (!string.IsNullOrWhiteSpace(adminEmail) &&
             !string.IsNullOrWhiteSpace(adminPassword))
@@ -164,9 +132,11 @@ if (app.Environment.IsDevelopment())
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
-                    FullName = adminName ?? "System Administrator",
-                    AccountStatus = CampusPlacementManagementAPI.Enums.AccountStatus.Approved,
-                    EmailConfirmed = true
+                    FullName = adminFullName ?? "System Administrator",
+                    EmailConfirmed = true,
+                    AccountStatus = AccountStatus.Approved,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
 
                 var result = await userManager.CreateAsync(
@@ -174,17 +144,14 @@ if (app.Environment.IsDevelopment())
 
                 if (!result.Succeeded)
                 {
+                    var errors = string.Join(
+                        ", ",
+                        result.Errors.Select(x => x.Description));
+
                     throw new Exception(
-                        "SuperAdmin creation failed: " +
-                        string.Join(", ",
-                            result.Errors.Select(e => e.Description)));
+                        "SuperAdmin creation failed: " + errors);
                 }
             }
-
-            admin.AccountStatus =
-                CampusPlacementManagementAPI.Enums.AccountStatus.Approved;
-
-            await userManager.UpdateAsync(admin);
 
             if (!await userManager.IsInRoleAsync(admin, "SuperAdmin"))
             {
@@ -196,7 +163,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// HTTP Pipeline
+// Middleware
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
