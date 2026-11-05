@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using CampusPlacementManagementAPI.Enums;
 
 namespace CampusPlacementManagementAPI.Models
 {
@@ -7,46 +5,20 @@ namespace CampusPlacementManagementAPI.Models
     {
         public int CollegeId { get; set; }
 
-        [Required]
-        [MaxLength(200)]
         public string CollegeName { get; set; } = string.Empty;
 
-        [Required]
-        [MaxLength(50)]
         public string CollegeCode { get; set; } = string.Empty;
 
-        [MaxLength(200)]
-        public string? UniversityName { get; set; }
-
-        [Required]
-        [EmailAddress]
-        [MaxLength(150)]
-        public string OfficialEmail { get; set; } = string.Empty;
-
-        [Required]
-        [Phone]
-        [MaxLength(15)]
-        public string PhoneNumber { get; set; } = string.Empty;
-
-        [Required]
-        [MaxLength(500)]
         public string Address { get; set; } = string.Empty;
 
-        [MaxLength(200)]
-        public string? Website { get; set; }
+        public string City { get; set; } = string.Empty;
 
-        public CollegeStatus Status { get; set; }
-            = CollegeStatus.Pending;
+        public string State { get; set; } = string.Empty;
 
-        public DateTime CreatedAt { get; set; }
-            = DateTime.UtcNow;
+        public string Email { get; set; } = string.Empty;
 
-        // Navigation properties
+        public string PhoneNumber { get; set; } = string.Empty;
 
-        public ICollection<Student> Students { get; set; }
-            = new List<Student>();
-
-        public ICollection<PlacementOfficer> PlacementOfficers { get; set; }
-            = new List<PlacementOfficer>();
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
