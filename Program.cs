@@ -1,30 +1,27 @@
 
-using System.Text;
 using CampusPlacementManagementAPI.Data;
 using CampusPlacementManagementAPI.Models;
 using CampusPlacementManagementAPI.Repositories;
 using CampusPlacementManagementAPI.Repositories.Interfaces;
 using CampusPlacementManagementAPI.Services;
 using CampusPlacementManagementAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
+using System.Security.Claims;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// --------------------------------------------------
-// 1. DATABASE CONFIGURATION
-// --------------------------------------------------
-
+// Database Configuration
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// --------------------------------------------------
-// 2. IDENTITY CONFIGURATION
-// --------------------------------------------------
-
+// Identity Configuration
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 8;
@@ -38,140 +35,98 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// --------------------------------------------------
-// 3. JWT AUTHENTICATION CONFIGURATION
-// --------------------------------------------------
+// JWT Authentication Configuration
+var jwtSettings = builder.Configuration.GetSection("Jwt");
 
-var jwtKey = builder.Configuration["Jwt:Key"]
-    ?? throw new InvalidOperationException("JWT Key is missing.");
+var key = Encoding.UTF8.GetBytes(
+    jwtSettings["Key"]!);
 
-var jwtIssuer = builder.Configuration["Jwt:Issuer"]
-    ?? throw new InvalidOperationException("JWT Issuer is missing.");
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme =
+        JwtBearerDefaults.AuthenticationScheme;
 
-var jwtAudience = builder.Configuration["Jwt:Audience"]
-    ?? throw new InvalidOperationException("JWT Audience is missing.");
+    options.DefaultChallengeScheme =
+        JwtBearerDefaults.AuthenticationScheme;
 
-builder.Services
-    .AddAuthentication(options =>
+    options.DefaultScheme =
+        JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.MapInboundClaims = false;
+
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultAuthenticateScheme =
-            JwtBearerDefaults.AuthenticationScheme;
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
 
-        options.DefaultChallengeScheme =
-            JwtBearerDefaults.AuthenticationScheme;
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
 
-        options.DefaultScheme =
-            JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.MapInboundClaims = false;
+        IssuerSigningKey = new SymmetricSecurityKey(key),
 
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
+        NameClaimType = ClaimTypes.NameIdentifier,
+        RoleClaimType = ClaimTypes.Role,
 
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtKey)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
-            ValidateIssuer = true,
-            ValidIssuer = jwtIssuer,
-
-            ValidateAudience = true,
-            ValidAudience = jwtAudience,
-
-            ValidateLifetime = true,
-
-            ClockSkew = TimeSpan.Zero,
-
-            NameClaimType = System.Security.Claims.ClaimTypes.NameIdentifier,
-
-            RoleClaimType = System.Security.Claims.ClaimTypes.Role
-        };
-    });
-
-// --------------------------------------------------
-// 4. AUTHORIZATION POLICIES
-// --------------------------------------------------
-
+// Authorization Configuration
 builder.Services.AddAuthorization(options =>
 {
+    options.AddPolicy("SuperAdminOnly", policy =>
+        policy.RequireRole("SuperAdmin"));
+
     options.AddPolicy("PlacementOfficerOnly", policy =>
         policy.RequireRole("PlacementOfficer"));
 
+    options.AddPolicy("CompanyHROnly", policy =>
+        policy.RequireRole("CompanyHR"));
+
     options.AddPolicy("StudentOnly", policy =>
         policy.RequireRole("Student"));
-
-    options.AddPolicy("StudentManagement", policy =>
-        policy.RequireRole("SuperAdmin", "PlacementOfficer"));
-
-    options.AddPolicy("StudentAccess", policy =>
-        policy.RequireRole(
-            "SuperAdmin",
-            "PlacementOfficer",
-            "Student"));
 });
 
-// --------------------------------------------------
-// 5. REPOSITORY REGISTRATIONS
-// --------------------------------------------------
-
-// College
+// College Repository and Service
 builder.Services.AddScoped<ICollegeRepository, CollegeRepository>();
-
-// Student
-builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-
-// Placement Officer
-builder.Services.AddScoped<
-    IPlacementOfficerRepository,
-    PlacementOfficerRepository>();
-
-// --------------------------------------------------
-// 6. SERVICE REGISTRATIONS
-// --------------------------------------------------
-
-// Authentication
-builder.Services.AddScoped<IAuthService, AuthService>();
-
-// College
 builder.Services.AddScoped<ICollegeService, CollegeService>();
 
-// Student
+// Student Repository and Service
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 
-// Placement Officer
-builder.Services.AddScoped<
-    IPlacementOfficerService,
-    PlacementOfficerService>();
+// Placement Officer Repository and Service
+builder.Services.AddScoped<IPlacementOfficerRepository, PlacementOfficerRepository>();
+builder.Services.AddScoped<IPlacementOfficerService, PlacementOfficerService>();
 
-// --------------------------------------------------
-// 7. CONTROLLERS AND OPENAPI
-// --------------------------------------------------
+// Company Repository and Service
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
 
+// Authentication Service
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Controllers and OpenAPI
 builder.Services.AddControllers();
-
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// --------------------------------------------------
-// 8. SUPER ADMIN SEEDING
-// --------------------------------------------------
-
+// SuperAdmin and Role Seeding
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
     {
-        var services = scope.ServiceProvider;
+        var roleManager = scope.ServiceProvider
+            .GetRequiredService<RoleManager<IdentityRole>>();
 
-        var roleManager =
-            services.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = scope.ServiceProvider
+            .GetRequiredService<UserManager<ApplicationUser>>();
 
-        var userManager =
-            services.GetRequiredService<UserManager<ApplicationUser>>();
-
-        // Create system roles
         string[] roles =
         {
             "SuperAdmin",
@@ -184,21 +139,10 @@ if (app.Environment.IsDevelopment())
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
-                var roleResult = await roleManager.CreateAsync(
+                await roleManager.CreateAsync(
                     new IdentityRole(role));
-
-                if (!roleResult.Succeeded)
-                {
-                    throw new InvalidOperationException(
-                        string.Join(", ",
-                            roleResult.Errors.Select(e => e.Description)));
-                }
             }
         }
-
-        // Read SuperAdmin details from configuration
-        var adminName =
-            builder.Configuration["SeedAdmin:FullName"];
 
         var adminEmail =
             builder.Configuration["SeedAdmin:Email"];
@@ -206,85 +150,53 @@ if (app.Environment.IsDevelopment())
         var adminPassword =
             builder.Configuration["SeedAdmin:Password"];
 
-        if (string.IsNullOrWhiteSpace(adminName) ||
-            string.IsNullOrWhiteSpace(adminEmail) ||
-            string.IsNullOrWhiteSpace(adminPassword))
+        var adminName =
+            builder.Configuration["SeedAdmin:FullName"];
+
+        if (!string.IsNullOrWhiteSpace(adminEmail) &&
+            !string.IsNullOrWhiteSpace(adminPassword))
         {
-            throw new InvalidOperationException(
-                "SuperAdmin configuration is missing.");
-        }
+            var admin = await userManager.FindByEmailAsync(adminEmail);
 
-        var admin = await userManager.FindByEmailAsync(adminEmail);
-
-        // Create SuperAdmin if not already present
-        if (admin == null)
-        {
-            admin = new ApplicationUser
+            if (admin == null)
             {
-                UserName = adminEmail,
-                Email = adminEmail,
-                FullName = adminName,
-                AccountStatus = CampusPlacementManagementAPI.Enums.AccountStatus.Approved,
-                EmailConfirmed = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
+                admin = new ApplicationUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    FullName = adminName ?? "System Administrator",
+                    AccountStatus = CampusPlacementManagementAPI.Enums.AccountStatus.Approved,
+                    EmailConfirmed = true
+                };
 
-            var createResult = await userManager.CreateAsync(
-                admin, adminPassword);
+                var result = await userManager.CreateAsync(
+                    admin, adminPassword);
 
-            if (!createResult.Succeeded)
-            {
-                throw new InvalidOperationException(
-                    string.Join(", ",
-                        createResult.Errors.Select(e => e.Description)));
+                if (!result.Succeeded)
+                {
+                    throw new Exception(
+                        "SuperAdmin creation failed: " +
+                        string.Join(", ",
+                            result.Errors.Select(e => e.Description)));
+                }
             }
-        }
 
-        // Ensure SuperAdmin account is approved
-        if (admin.AccountStatus !=
-            CampusPlacementManagementAPI.Enums.AccountStatus.Approved)
-        {
             admin.AccountStatus =
                 CampusPlacementManagementAPI.Enums.AccountStatus.Approved;
 
-            admin.UpdatedAt = DateTime.UtcNow;
+            await userManager.UpdateAsync(admin);
 
-            var updateResult = await userManager.UpdateAsync(admin);
-
-            if (!updateResult.Succeeded)
+            if (!await userManager.IsInRoleAsync(admin, "SuperAdmin"))
             {
-                throw new InvalidOperationException(
-                    string.Join(", ",
-                        updateResult.Errors.Select(e => e.Description)));
-            }
-        }
-
-        // Ensure SuperAdmin role is assigned
-        if (!await userManager.IsInRoleAsync(admin, "SuperAdmin"))
-        {
-            var roleResult = await userManager.AddToRoleAsync(
-                admin, "SuperAdmin");
-
-            if (!roleResult.Succeeded)
-            {
-                throw new InvalidOperationException(
-                    string.Join(", ",
-                        roleResult.Errors.Select(e => e.Description)));
+                await userManager.AddToRoleAsync(admin, "SuperAdmin");
             }
         }
     }
-}
 
-// --------------------------------------------------
-// 9. HTTP REQUEST PIPELINE
-// --------------------------------------------------
-
-if (app.Environment.IsDevelopment())
-{
     app.MapOpenApi();
 }
 
+// HTTP Pipeline
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

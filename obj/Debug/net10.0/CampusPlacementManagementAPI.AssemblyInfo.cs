@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CampusPlacementManagementAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ad2cbcd7e4cf04c7d13b81dd85338d4fc3313ace")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+940e26791331113853a34e54f2e13ef216f9a94d")]
 [assembly: System.Reflection.AssemblyProductAttribute("CampusPlacementManagementAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CampusPlacementManagementAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

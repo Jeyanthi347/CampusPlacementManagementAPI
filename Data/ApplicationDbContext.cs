@@ -21,6 +21,8 @@ namespace CampusPlacementManagementAPI.Data
 
         public DbSet<PlacementOfficer> PlacementOfficers { get; set; } = null!;
 
+        public DbSet<Company> Companies { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -31,40 +33,34 @@ namespace CampusPlacementManagementAPI.Data
                 entity.HasKey(c => c.CollegeId);
 
                 entity.Property(c => c.CollegeName)
-                    .HasMaxLength(200)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(200);
 
                 entity.Property(c => c.CollegeCode)
-                    .HasMaxLength(50)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.Property(c => c.UniversityName)
-                    .HasMaxLength(200)
-                    .IsRequired(false);
+                    .HasMaxLength(200);
 
                 entity.Property(c => c.Address)
-                    .HasMaxLength(500)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(500);
 
                 entity.Property(c => c.OfficialEmail)
                     .HasColumnName("Email")
-                    .HasMaxLength(255)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(255);
 
                 entity.Property(c => c.PhoneNumber)
-                    .HasMaxLength(20)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(20);
 
                 entity.Property(c => c.Website)
-                    .HasMaxLength(255)
-                    .IsRequired(false);
+                    .HasMaxLength(255);
 
                 entity.Property(c => c.Status)
-                    .HasDefaultValue(CollegeStatus.Pending)
-                    .IsRequired();
-
-                entity.Property(c => c.CreatedAt)
-                    .IsRequired();
+                    .HasDefaultValue(CollegeStatus.Pending);
 
                 entity.HasIndex(c => c.CollegeCode)
                     .IsUnique();
@@ -82,27 +78,25 @@ namespace CampusPlacementManagementAPI.Data
                     .IsRequired();
 
                 entity.Property(s => s.RegisterNumber)
-                    .HasMaxLength(50)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.Property(s => s.Department)
-                    .HasMaxLength(100)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(100);
 
                 entity.Property(s => s.Degree)
-                    .HasMaxLength(100)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(100);
 
                 entity.Property(s => s.CGPA)
                     .HasPrecision(4, 2);
 
                 entity.Property(s => s.ResumeUrl)
-                    .HasMaxLength(500)
-                    .IsRequired(false);
+                    .HasMaxLength(500);
 
                 entity.Property(s => s.Status)
-                    .HasDefaultValue(StudentStatus.Pending)
-                    .IsRequired();
+                    .HasDefaultValue(StudentStatus.Pending);
 
                 entity.HasIndex(s => s.UserId)
                     .IsUnique();
@@ -111,8 +105,7 @@ namespace CampusPlacementManagementAPI.Data
                 {
                     s.CollegeId,
                     s.RegisterNumber
-                })
-                .IsUnique();
+                }).IsUnique();
 
                 entity.HasOne(s => s.User)
                     .WithOne(u => u.Student)
@@ -134,29 +127,25 @@ namespace CampusPlacementManagementAPI.Data
                     .IsRequired();
 
                 entity.Property(p => p.Designation)
-                    .HasMaxLength(100)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasMaxLength(100);
 
                 entity.Property(p => p.Status)
-                    .HasDefaultValue(PlacementOfficerStatus.Pending)
-                    .IsRequired();
+                    .HasDefaultValue(PlacementOfficerStatus.Pending);
 
                 entity.Property(p => p.ApprovedBy)
                     .IsRequired(false);
 
-                // One ApplicationUser can have one PlacementOfficer profile
                 entity.HasOne(p => p.User)
                     .WithOne(u => u.PlacementOfficer)
                     .HasForeignKey<PlacementOfficer>(p => p.UserId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // One College can have multiple Placement Officers
                 entity.HasOne(p => p.College)
                     .WithMany()
                     .HasForeignKey(p => p.CollegeId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // SuperAdmin who approved the Placement Officer
                 entity.HasOne(p => p.Approver)
                     .WithMany()
                     .HasForeignKey(p => p.ApprovedBy)
@@ -166,6 +155,43 @@ namespace CampusPlacementManagementAPI.Data
                     .IsUnique();
 
                 entity.HasIndex(p => p.CollegeId);
+            });
+
+            // Company Configuration
+            builder.Entity<Company>(entity =>
+            {
+                entity.HasKey(c => c.CompanyId);
+
+                entity.Property(c => c.CompanyName)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(c => c.CompanyEmail)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(c => c.Website)
+                    .HasMaxLength(255);
+
+                entity.Property(c => c.Industry)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(c => c.Address)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(c => c.Description)
+                    .IsRequired(false);
+
+                entity.Property(c => c.Status)
+                    .HasDefaultValue(CompanyStatus.Pending);
+
+                entity.Property(c => c.CreatedAt)
+                    .IsRequired();
+
+                entity.HasIndex(c => c.CompanyEmail)
+                    .IsUnique();
             });
         }
     }
