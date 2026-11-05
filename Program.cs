@@ -16,14 +16,21 @@ using CampusPlacementManagementAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Database connection
+// --------------------------------------------------
+// 1. Database Configuration
+// --------------------------------------------------
+
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// 2. ASP.NET Core Identity
+
+// --------------------------------------------------
+// 2. ASP.NET Core Identity Configuration
+// --------------------------------------------------
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 8;
@@ -37,7 +44,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// 3. JWT Authentication
+
+// --------------------------------------------------
+// 3. JWT Configuration
+// --------------------------------------------------
+
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT Key is missing.");
 
@@ -54,30 +65,38 @@ builder.Services.AddAuthentication(options =>
 
     options.DefaultChallengeScheme =
         JwtBearerDefaults.AuthenticationScheme;
+
+    options.DefaultScheme =
+        JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
+    options.TokenValidationParameters =
+        new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
 
-        ValidIssuer = jwtIssuer,
-        ValidAudience = jwtAudience,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
 
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtKey)),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtKey)),
 
-        RoleClaimType = ClaimTypes.Role,
-        NameClaimType = ClaimTypes.NameIdentifier,
+            RoleClaimType = ClaimTypes.Role,
+            NameClaimType = ClaimTypes.Name,
 
-        ClockSkew = TimeSpan.Zero
-    };
+            ClockSkew = TimeSpan.Zero
+        };
 });
 
-// 4. Authorization policies
+
+// --------------------------------------------------
+// 4. Authorization Policies
+// --------------------------------------------------
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("PlacementOfficerOnly", policy =>
@@ -96,19 +115,43 @@ builder.Services.AddAuthorization(options =>
             "Student"));
 });
 
-// 5. Student Repository registration
+
+// --------------------------------------------------
+// 5. Repository Dependency Injection
+// --------------------------------------------------
+
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
-// 6. Student Service registration
+
+// --------------------------------------------------
+// 6. Service Dependency Injection
+// --------------------------------------------------
+
 builder.Services.AddScoped<IStudentService, StudentService>();
 
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+
+// --------------------------------------------------
 // 7. Controllers and OpenAPI
+// --------------------------------------------------
+
 builder.Services.AddControllers();
+
 builder.Services.AddOpenApi();
+
+
+// --------------------------------------------------
+// 8. Build Application
+// --------------------------------------------------
 
 var app = builder.Build();
 
-// 8. HTTP request pipeline
+
+// --------------------------------------------------
+// 9. HTTP Request Pipeline
+// --------------------------------------------------
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
