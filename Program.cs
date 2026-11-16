@@ -85,6 +85,7 @@ builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyHRRepository, CompanyHRRepository>();
 builder.Services.AddScoped<IJobRepository, JobRepository>();
 builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
+builder.Services.AddScoped<IRecruitmentDriveRepository, RecruitmentDriveRepository>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -95,6 +96,7 @@ builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<ICompanyHRService, CompanyHRService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
+builder.Services.AddScoped<IRecruitmentDriveService, RecruitmentDriveService>();
 
 // Controllers and Swagger
 builder.Services.AddControllers();

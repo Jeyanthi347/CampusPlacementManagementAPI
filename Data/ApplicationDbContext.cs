@@ -35,6 +35,8 @@ namespace CampusPlacementManagementAPI.Data
 
         public DbSet<ApplicationStatusHistory> ApplicationStatusHistories { get; set; }
 
+        public DbSet<RecruitmentDrive> RecruitmentDrives { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -379,6 +381,39 @@ namespace CampusPlacementManagementAPI.Data
                     .WithMany()
                     .HasForeignKey(x => x.UpdatedByUserId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+
+            // ==========================================
+            // RECRUITMENT DRIVE CONFIGURATION
+            // ==========================================
+
+            builder.Entity<RecruitmentDrive>(entity =>
+            {
+                entity.HasKey(x => x.DriveId);
+
+                entity.Property(x => x.DriveDate)
+                    .IsRequired();
+
+                entity.Property(x => x.Venue)
+                    .HasMaxLength(255);
+
+                entity.Property(x => x.Status)
+                    .IsRequired();
+
+                entity.HasOne(x => x.JobOpening)
+                    .WithMany()
+                    .HasForeignKey(x => x.JobId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.College)
+                    .WithMany()
+                    .HasForeignKey(x => x.CollegeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => x.JobId);
+
+                entity.HasIndex(x => x.CollegeId);
             });
         }
     }
