@@ -1,5 +1,6 @@
 
 using CampusPlacementManagementAPI.DTOs.Auth;
+using Microsoft.AspNetCore.Identity;
 
 namespace CampusPlacementManagementAPI.Services.Interfaces
 {
@@ -10,5 +11,10 @@ namespace CampusPlacementManagementAPI.Services.Interfaces
         Task<bool> ChangePasswordAsync(
             string userId,
             ChangePasswordDto dto);
+
+        Task<IdentityResult?> ResetUserPasswordAsync(
+            AdminResetPasswordDto dto);
+
+        Task<IdentityResult?> AssignStudentRoleAsync(string email);
     }
 }

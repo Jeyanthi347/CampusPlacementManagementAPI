@@ -2,11 +2,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CampusPlacementManagementAPI.Data;
 using CampusPlacementManagementAPI.DTOs.Auth;
 using CampusPlacementManagementAPI.Enums;
 using CampusPlacementManagementAPI.Models;
 using CampusPlacementManagementAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CampusPlacementManagementAPI.Services
@@ -15,13 +17,16 @@ namespace CampusPlacementManagementAPI.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _context = context;
         }
 
         public async Task<LoginResponseDto?> LoginAsync(LoginDto dto)
@@ -55,6 +60,24 @@ namespace CampusPlacementManagementAPI.Services
                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                 new Claim(ClaimTypes.Role, role)
             };
+
+            // Add Placement Officer details to JWT
+            if (role == "PlacementOfficer")
+            {
+                var placementOfficer = await _context.PlacementOfficers
+                    .FirstOrDefaultAsync(x => x.UserId == user.Id);
+
+                if (placementOfficer == null)
+                    return null;
+
+                claims.Add(new Claim(
+                    "CollegeId",
+                    placementOfficer.CollegeId.ToString()));
+
+                claims.Add(new Claim(
+                    "PlacementOfficerId",
+                    placementOfficer.PlacementOfficerId.ToString()));
+            }
 
             var key = _configuration["Jwt:Key"]
                 ?? throw new InvalidOperationException("JWT Key is missing.");
@@ -113,6 +136,48 @@ namespace CampusPlacementManagementAPI.Services
                 dto.NewPassword);
 
             return result.Succeeded;
+        }
+
+        public async Task<IdentityResult?> ResetUserPasswordAsync(
+            AdminResetPasswordDto dto)
+        {
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+
+            if (user == null)
+                return null;
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var result = await _userManager.ResetPasswordAsync(
+                user,
+                token,
+                dto.NewPassword);
+
+            return result;
+        }
+
+        // Assign Student role to an existing user
+        public async Task<IdentityResult?> AssignStudentRoleAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+                return null;
+
+            // Check whether the user already has the Student role
+            var alreadyAssigned = await _userManager.IsInRoleAsync(
+                user,
+                "Student");
+
+            if (alreadyAssigned)
+                return IdentityResult.Success;
+
+            // Assign Student role
+            var result = await _userManager.AddToRoleAsync(
+                user,
+                "Student");
+
+            return result;
         }
     }
 }

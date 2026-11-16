@@ -65,5 +65,68 @@ namespace CampusPlacementManagementAPI.Controllers
                 message = "Password changed successfully."
             });
         }
+
+        // PUT: api/auth/admin-reset-password
+        [HttpPut("admin-reset-password")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> AdminResetPassword(
+            AdminResetPasswordDto dto)
+        {
+            var result = await _authService.ResetUserPasswordAsync(dto);
+
+            if (result == null)
+            {
+                return NotFound(new
+                {
+                    message = "User with the given email was not found."
+                });
+            }
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(new
+                {
+                    message = "Password reset failed.",
+                    errors = result.Errors.Select(error => error.Description)
+                });
+            }
+
+            return Ok(new
+            {
+                message = "User password reset successfully."
+            });
+        }
+
+        // PUT: api/auth/assign-student-role
+        [HttpPut("assign-student-role")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> AssignStudentRole(
+            AdminAssignStudentRoleDto dto)
+        {
+            var result = await _authService.AssignStudentRoleAsync(
+                dto.Email);
+
+            if (result == null)
+            {
+                return NotFound(new
+                {
+                    message = "User with the given email was not found."
+                });
+            }
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(new
+                {
+                    message = "Student role assignment failed.",
+                    errors = result.Errors.Select(error => error.Description)
+                });
+            }
+
+            return Ok(new
+            {
+                message = "Student role assigned successfully."
+            });
+        }
     }
 }

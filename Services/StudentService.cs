@@ -67,6 +67,20 @@ namespace CampusPlacementManagementAPI.Services
                         result.Errors.Select(e => e.Description)));
             }
 
+            // Assign Student role
+            var roleResult = await _userManager.AddToRoleAsync(
+                user,
+                "Student");
+
+            if (!roleResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(user);
+
+                throw new InvalidOperationException(
+                    string.Join("; ",
+                        roleResult.Errors.Select(e => e.Description)));
+            }
+
             var student = new Student
             {
                 UserId = user.Id,
