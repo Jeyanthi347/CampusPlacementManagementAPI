@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using CampusPlacementManagementAPI.Data;
 using CampusPlacementManagementAPI.Enums;
+using CampusPlacementManagementAPI.Exceptions;
 using CampusPlacementManagementAPI.Models;
 using CampusPlacementManagementAPI.Repositories;
 using CampusPlacementManagementAPI.Repositories.Interfaces;
@@ -15,12 +16,18 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DB configuration
+// ==========================================
+// DB CONFIGURATION
+// ==========================================
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Identity
+// ==========================================
+// IDENTITY CONFIGURATION
+// ==========================================
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -33,7 +40,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// JWT configuration
+// ==========================================
+// JWT CONFIGURATION
+// ==========================================
+
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT Key is missing.");
 
@@ -75,7 +85,18 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// ==========================================
+// AUTHORIZATION
+// ==========================================
+
 builder.Services.AddAuthorization();
+
+// ==========================================
+// GLOBAL EXCEPTION HANDLING
+// ==========================================
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // ==========================================
 // REPOSITORIES
@@ -108,14 +129,26 @@ builder.Services.AddScoped<IRecruitmentDriveService, RecruitmentDriveService>();
 builder.Services.AddScoped<IInterviewRoundService, InterviewRoundService>();
 builder.Services.AddScoped<IInterviewScheduleService, InterviewScheduleService>();
 
-// Controllers and Swagger
+// ==========================================
+// CONTROLLERS AND SWAGGER
+// ==========================================
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Seed roles and SuperAdmin in Development
+// ==========================================
+// GLOBAL EXCEPTION HANDLING MIDDLEWARE
+// ==========================================
+
+app.UseExceptionHandler();
+
+// ==========================================
+// SEED ROLES AND SUPERADMIN IN DEVELOPMENT
+// ==========================================
+
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
@@ -191,12 +224,19 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-// Swagger
+// ==========================================
+// SWAGGER
+// ==========================================
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// ==========================================
+// MIDDLEWARE PIPELINE
+// ==========================================
 
 app.UseHttpsRedirection();
 
