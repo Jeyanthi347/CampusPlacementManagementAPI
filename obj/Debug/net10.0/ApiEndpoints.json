@@ -1,5 +1,158 @@
 [
   {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.InterviewScheduleController",
+    "Method": "CreateInterviewSchedule",
+    "RelativePath": "api/applications/{applicationId}/interviews",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "applicationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.InterviewSchedule.InterviewScheduleCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.InterviewScheduleController",
+    "Method": "GetInterviewSchedules",
+    "RelativePath": "api/applications/{applicationId}/interviews",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "applicationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.ApplicationsController",
+    "Method": "GetApplicationById",
+    "RelativePath": "api/applications/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.ApplicationsController",
+    "Method": "RejectApplication",
+    "RelativePath": "api/applications/{id}/reject",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.Application.ApplicationStatusUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.ApplicationsController",
+    "Method": "ShortlistApplication",
+    "RelativePath": "api/applications/{id}/shortlist",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.Application.ApplicationStatusUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.ApplicationsController",
+    "Method": "WithdrawApplication",
+    "RelativePath": "api/applications/{id}/withdraw",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.ApplicationsController",
+    "Method": "GetMyApplications",
+    "RelativePath": "api/applications/my",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.AuthController",
+    "Method": "AdminResetPassword",
+    "RelativePath": "api/Auth/admin-reset-password",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.Auth.AdminResetPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.AuthController",
+    "Method": "AssignStudentRole",
+    "RelativePath": "api/Auth/assign-student-role",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.Auth.AdminAssignStudentRoleDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "CampusPlacementManagementAPI.Controllers.AuthController",
     "Method": "ChangePassword",
     "RelativePath": "api/Auth/change-password",
@@ -348,6 +501,69 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.InterviewRoundController",
+    "Method": "UpdateInterviewRound",
+    "RelativePath": "api/interview-rounds/{interviewRoundId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "interviewRoundId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.InterviewRound.InterviewRoundUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.InterviewScheduleController",
+    "Method": "UpdateInterviewSchedule",
+    "RelativePath": "api/interviews/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.InterviewSchedule.InterviewScheduleUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.InterviewScheduleController",
+    "Method": "UpdateInterviewFeedback",
+    "RelativePath": "api/interviews/{id}/feedback",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "feedback",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
     "Method": "CreateJob",
     "RelativePath": "api/jobs",
@@ -475,6 +691,80 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.ApplicationsController",
+    "Method": "GetApplicationsByJob",
+    "RelativePath": "api/jobs/{jobId}/applications",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jobId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.ApplicationsController",
+    "Method": "ApplyForJob",
+    "RelativePath": "api/jobs/{jobId}/apply",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jobId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.Application.JobApplicationCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.InterviewRoundController",
+    "Method": "CreateInterviewRound",
+    "RelativePath": "api/jobs/{jobId}/interview-rounds",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jobId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.InterviewRound.InterviewRoundCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.InterviewRoundController",
+    "Method": "GetInterviewRounds",
+    "RelativePath": "api/jobs/{jobId}/interview-rounds",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jobId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "CampusPlacementManagementAPI.Controllers.JobsController",
     "Method": "GetEligibleJobs",
     "RelativePath": "api/jobs/eligible",
@@ -589,6 +879,85 @@
       {
         "Name": "dto",
         "Type": "CampusPlacementManagementAPI.DTOs.PlacementOfficer.PlacementOfficerRegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.RecruitmentDriveController",
+    "Method": "CreateDrive",
+    "RelativePath": "api/recruitment-drives",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.RecruitmentDrive.RecruitmentDriveCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.RecruitmentDriveController",
+    "Method": "GetAllDrives",
+    "RelativePath": "api/recruitment-drives",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.RecruitmentDriveController",
+    "Method": "GetDriveById",
+    "RelativePath": "api/recruitment-drives/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.RecruitmentDriveController",
+    "Method": "UpdateDrive",
+    "RelativePath": "api/recruitment-drives/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "CampusPlacementManagementAPI.DTOs.RecruitmentDrive.RecruitmentDriveUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CampusPlacementManagementAPI.Controllers.RecruitmentDriveController",
+    "Method": "CancelDrive",
+    "RelativePath": "api/recruitment-drives/{id}/cancel",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],
