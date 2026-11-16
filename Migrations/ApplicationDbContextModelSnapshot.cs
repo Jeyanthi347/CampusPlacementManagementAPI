@@ -317,6 +317,46 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.ToTable("InterviewRounds");
                 });
 
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.InterviewSchedule", b =>
+                {
+                    b.Property<int>("InterviewScheduleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InterviewScheduleId"));
+
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Feedback")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InterviewRoundId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MeetingLink")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Venue")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("InterviewScheduleId");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("InterviewRoundId");
+
+                    b.ToTable("InterviewSchedules");
+                });
+
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobApplication", b =>
                 {
                     b.Property<int>("ApplicationId")
@@ -779,6 +819,25 @@ namespace CampusPlacementManagementAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("JobOpening");
+                });
+
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.InterviewSchedule", b =>
+                {
+                    b.HasOne("CampusPlacementManagementAPI.Models.JobApplication", "JobApplication")
+                        .WithMany()
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CampusPlacementManagementAPI.Models.InterviewRound", "InterviewRound")
+                        .WithMany()
+                        .HasForeignKey("InterviewRoundId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("InterviewRound");
+
+                    b.Navigation("JobApplication");
                 });
 
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobApplication", b =>

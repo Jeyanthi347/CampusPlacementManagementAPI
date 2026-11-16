@@ -77,7 +77,10 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Repositories
+// ==========================================
+// REPOSITORIES
+// ==========================================
+
 builder.Services.AddScoped<ICollegeRepository, CollegeRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IPlacementOfficerRepository, PlacementOfficerRepository>();
@@ -87,8 +90,12 @@ builder.Services.AddScoped<IJobRepository, JobRepository>();
 builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
 builder.Services.AddScoped<IRecruitmentDriveRepository, RecruitmentDriveRepository>();
 builder.Services.AddScoped<IInterviewRoundRepository, InterviewRoundRepository>();
+builder.Services.AddScoped<IInterviewScheduleRepository, InterviewScheduleRepository>();
 
-// Services
+// ==========================================
+// SERVICES
+// ==========================================
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICollegeService, CollegeService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
@@ -99,6 +106,7 @@ builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<IRecruitmentDriveService, RecruitmentDriveService>();
 builder.Services.AddScoped<IInterviewRoundService, InterviewRoundService>();
+builder.Services.AddScoped<IInterviewScheduleService, InterviewScheduleService>();
 
 // Controllers and Swagger
 builder.Services.AddControllers();

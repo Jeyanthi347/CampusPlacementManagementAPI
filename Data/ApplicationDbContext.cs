@@ -39,6 +39,8 @@ namespace CampusPlacementManagementAPI.Data
 
         public DbSet<InterviewRound> InterviewRounds { get; set; }
 
+        public DbSet<InterviewSchedule> InterviewSchedules { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -331,20 +333,17 @@ namespace CampusPlacementManagementAPI.Data
                 entity.Property(x => x.ResumeUrl)
                     .HasMaxLength(500);
 
-                // One student cannot apply twice for the same job.
                 entity.HasIndex(x => new
                 {
                     x.StudentId,
                     x.JobId
                 }).IsUnique();
 
-                // Job relationship
                 entity.HasOne(x => x.Job)
                     .WithMany()
                     .HasForeignKey(x => x.JobId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // Student relationship
                 entity.HasOne(x => x.Student)
                     .WithMany()
                     .HasForeignKey(x => x.StudentId)
@@ -372,13 +371,11 @@ namespace CampusPlacementManagementAPI.Data
                 entity.Property(x => x.UpdatedAt)
                     .IsRequired();
 
-                // Application relationship
                 entity.HasOne(x => x.Application)
                     .WithMany(x => x.StatusHistory)
                     .HasForeignKey(x => x.ApplicationId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // User who changed the application status
                 entity.HasOne(x => x.UpdatedByUser)
                     .WithMany()
                     .HasForeignKey(x => x.UpdatedByUserId)
@@ -440,6 +437,44 @@ namespace CampusPlacementManagementAPI.Data
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasIndex(x => x.JobId);
+            });
+
+
+            // ==========================================
+            // INTERVIEW SCHEDULE CONFIGURATION
+            // ==========================================
+
+            builder.Entity<InterviewSchedule>(entity =>
+            {
+                entity.HasKey(x => x.InterviewScheduleId);
+
+                entity.Property(x => x.ScheduledAt)
+                    .IsRequired();
+
+                entity.Property(x => x.MeetingLink)
+                    .HasMaxLength(500);
+
+                entity.Property(x => x.Venue)
+                    .HasMaxLength(255);
+
+                entity.Property(x => x.Status)
+                    .IsRequired();
+
+                entity.Property(x => x.Feedback);
+
+                entity.HasOne(x => x.JobApplication)
+                    .WithMany()
+                    .HasForeignKey(x => x.ApplicationId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.InterviewRound)
+                    .WithMany()
+                    .HasForeignKey(x => x.InterviewRoundId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => x.ApplicationId);
+
+                entity.HasIndex(x => x.InterviewRoundId);
             });
         }
     }
