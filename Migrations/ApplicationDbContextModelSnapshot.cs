@@ -288,6 +288,35 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.ToTable("CompanyHRs");
                 });
 
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.InterviewRound", b =>
+                {
+                    b.Property<int>("InterviewRoundId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InterviewRoundId"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RoundName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("RoundNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("InterviewRoundId");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("InterviewRounds");
+                });
+
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobApplication", b =>
                 {
                     b.Property<int>("ApplicationId")
@@ -739,6 +768,17 @@ namespace CampusPlacementManagementAPI.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CampusPlacementManagementAPI.Models.InterviewRound", b =>
+                {
+                    b.HasOne("CampusPlacementManagementAPI.Models.JobOpening", "JobOpening")
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("JobOpening");
                 });
 
             modelBuilder.Entity("CampusPlacementManagementAPI.Models.JobApplication", b =>

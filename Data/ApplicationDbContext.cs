@@ -37,6 +37,8 @@ namespace CampusPlacementManagementAPI.Data
 
         public DbSet<RecruitmentDrive> RecruitmentDrives { get; set; }
 
+        public DbSet<InterviewRound> InterviewRounds { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -414,6 +416,30 @@ namespace CampusPlacementManagementAPI.Data
                 entity.HasIndex(x => x.JobId);
 
                 entity.HasIndex(x => x.CollegeId);
+            });
+
+
+            // ==========================================
+            // INTERVIEW ROUND CONFIGURATION
+            // ==========================================
+
+            builder.Entity<InterviewRound>(entity =>
+            {
+                entity.HasKey(x => x.InterviewRoundId);
+
+                entity.Property(x => x.RoundName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.RoundNumber)
+                    .IsRequired();
+
+                entity.HasOne(x => x.JobOpening)
+                    .WithMany()
+                    .HasForeignKey(x => x.JobId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => x.JobId);
             });
         }
     }

@@ -86,6 +86,7 @@ builder.Services.AddScoped<ICompanyHRRepository, CompanyHRRepository>();
 builder.Services.AddScoped<IJobRepository, JobRepository>();
 builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
 builder.Services.AddScoped<IRecruitmentDriveRepository, RecruitmentDriveRepository>();
+builder.Services.AddScoped<IInterviewRoundRepository, InterviewRoundRepository>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -97,6 +98,7 @@ builder.Services.AddScoped<ICompanyHRService, CompanyHRService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<IRecruitmentDriveService, RecruitmentDriveService>();
+builder.Services.AddScoped<IInterviewRoundService, InterviewRoundService>();
 
 // Controllers and Swagger
 builder.Services.AddControllers();
